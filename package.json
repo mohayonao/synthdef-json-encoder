@@ -1,0 +1,32 @@
+{
+  "name": "synthdef-json-encoder",
+  "description": "encoder for SuperCollider Synth Definition File Format",
+  "version": "0.0.0",
+  "author": "Nao Yonamine <mohayonao@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/mohayonao/synthdef-json-encoder/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">= 4.0.0"
+  },
+  "files": [
+    "package.json",
+    "README.md",
+    "lib"
+  ],
+  "homepage": "https://github.com/mohayonao/synthdef-json-encoder/",
+  "keywords": [
+    "encode",
+    "supercollider",
+    "synthdef"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mohayonao/synthdef-json-encoder.git"
+  },
+  "scripts": {}
+}
