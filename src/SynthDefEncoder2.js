@@ -21,12 +21,12 @@ class SynthDefEncoder2 {
     this.writer.writePascalString(value);
   }
 
-  writeConsts(values) {
-    if (!Array.isArray(values)) {
-      values = [];
+  writeConsts(consts) {
+    if (!Array.isArray(consts)) {
+      consts = [];
     }
-    this.writeNumberOfConstants(values.length);
-    values.forEach((value) => {
+    this.writeNumberOfConstants(consts.length);
+    consts.forEach((value) => {
       this.writer.writeFloat32(value);
     });
   }
@@ -35,12 +35,12 @@ class SynthDefEncoder2 {
     this.writer.writeInt32(value);
   }
 
-  writeParamValues(values) {
-    if (!Array.isArray(values)) {
-      values = [];
+  writeParamValues(paramValues) {
+    if (!Array.isArray(paramValues)) {
+      paramValues = [];
     }
-    this.writeNumberOfParamValues(values.length);
-    values.forEach((value) => {
+    this.writeNumberOfParamValues(paramValues.length);
+    paramValues.forEach((value) => {
       this.writer.writeFloat32(value);
     })
   }
@@ -49,16 +49,19 @@ class SynthDefEncoder2 {
     this.writer.writeInt32(value);
   }
 
-  writeParamIndices(values) {
-    if (values === null || typeof values !== "object") {
-      values = {};
+  writeParamIndices(paramIndices) {
+    if (paramIndices == null) {
+      paramIndices = [];
     }
-    const params = Object.keys(values);
-
-    this.writeNumberOfParamIndices(params.length);
-    params.forEach((name) => {
+    if (!Array.isArray(paramIndices) && typeof paramIndices === "object") {
+      paramIndices = Object.keys(paramIndices).map((name) => {
+        return Object.assign({ name }, paramIndices[name]);
+      }, []);
+    }
+    this.writeNumberOfParamIndices(paramIndices.length);
+    paramIndices.forEach(({ name, index }) => {
       this.writeParamName(name);
-      this.writeParamNameIndex(values[name].index);
+      this.writeParamNameIndex(index);
     });
   }
 
@@ -74,12 +77,12 @@ class SynthDefEncoder2 {
     this.writer.writeInt32(value);
   }
 
-  writeUnits(values) {
-    if (!Array.isArray(values)) {
-      values = [];
+  writeUnits(units) {
+    if (!Array.isArray(units)) {
+      units = [];
     }
-    this.writeNumberOfUnits(values.length);
-    values.forEach(([ name, rate, specialIndex, inputSpecs, outputSpecs ]) => {
+    this.writeNumberOfUnits(units.length);
+    units.forEach(([ name, rate, specialIndex, inputSpecs, outputSpecs ]) => {
       this.writeUGenName(name);
       this.writeUGenRate(rate);
       this.writeUGenNumberOfInputs(inputSpecs.length);
@@ -135,19 +138,23 @@ class SynthDefEncoder2 {
     });
   }
 
-  writeVariants(values, synthDefName) {
-    if (values === null || typeof values !== "object") {
-      values = {};
+  writeVariants(variants, synthDefName) {
+    if (variants == null) {
+      variants = [];
+    }
+    if (!Array.isArray(variants) && typeof variants === "object") {
+      variants = Object.keys(variants).map((name) => {
+        return { name, values: variants[name] };
+      }, []);
     }
     if (typeof synthDefName !== "string") {
       synthDefName = "";
     }
-    const variants = Object.keys(values);
 
     this.writeNumberOfVariants(variants.length);
-    variants.forEach((name) => {
+    variants.forEach(({ name, values }) => {
       this.writeVariantName(`${ synthDefName }.${ name }`);
-      values[name].forEach((value) => {
+      values.forEach((value) => {
         this.writeVariantValue(+value);
       });
     });
